@@ -48,18 +48,32 @@ class Editor extends Field
     {
         $this->addVariables([
             'height'     => $this->height,
-            'scopeClass' => 'simplemde-'.uniqid()
+            'scopeClass' => 'simplemde-' . uniqid()
         ]);
 
         $name = $this->formatName($this->column);
 
         $config = (array) Simplemde::config('config');
 
+        $uplod_url = $config['upload'];
+        $cs = csrf_token();
+        $uploadFieldName = !empty($config['uploadFieldName']) ? $config['uploadFieldName'] : 'image';
+        $jsonFieldName = !empty($config['jsonFieldName']) ? $config['jsonFieldName'] : 'image';
+
         $config = json_encode($config);
 
-        $varName = 'simplemde_'.uniqid();
+        $varName = 'simplemde_' . uniqid();
 
         $this->script = <<<EOT
+
+var inlineAttachmentConfig = {
+    uploadUrl: "$uplod_url",
+    uploadFieldName: "$uploadFieldName",
+    jsonFieldName: "$jsonFieldName",
+    extraHeaders: {
+        'X-CSRF-Token': '$cs'
+    }
+};
 
 var options = {element: $("#{$this->id}")[0]};
 
@@ -71,6 +85,8 @@ $varName.codemirror.on("change", function(){
 	var html = $varName.value();
     $('input[name=$name]').val(html);
 });
+
+inlineAttachment.editors.codemirror4.attach($varName.codemirror, inlineAttachmentConfig);
 
 EOT;
         return parent::render();

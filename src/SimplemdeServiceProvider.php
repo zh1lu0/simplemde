@@ -13,8 +13,8 @@ class SimplemdeServiceProvider extends ServiceProvider
      */
     public function boot(Simplemde $extension)
     {
-        if (! Simplemde::boot()) {
-            return ;
+        if (!Simplemde::boot()) {
+            return;
         }
 
         if ($views = $extension->views()) {
@@ -41,6 +41,8 @@ class SimplemdeServiceProvider extends ServiceProvider
                 Admin::css('//cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css');
                 Admin::js('//cdn.jsdelivr.net/highlight.js/latest/highlight.min.js');
             }
+            Admin::js('vendor/laravel-admin-ext/simplemde/dist/inline-attachment.min.js');
+            Admin::js('vendor/laravel-admin-ext/simplemde/dist/codemirror.inline-attachment.js');
         });
     }
 }
